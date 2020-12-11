@@ -1,0 +1,9 @@
+{
+  "name": "thomashauser/cluster-jupyterlab-testing",
+  "httpPort": 9999,
+  "mounts": [
+    {
+      "path": "/home/jovyan/projects"
+    }
+  ]
+}

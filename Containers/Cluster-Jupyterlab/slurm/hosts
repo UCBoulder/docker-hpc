@@ -1,0 +1,5 @@
+# need to add to make slurm and mpich works reliably
+127.0.0.1 c1
+127.0.0.1 c2
+127.0.0.1 c3
+127.0.0.1 c4

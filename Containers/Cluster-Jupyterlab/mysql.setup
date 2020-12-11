@@ -1,0 +1,4 @@
+update mysql.user set password='root_db_passwd' where user='root';
+delete from mysql.user where user='root' and host not in ('localhost', '127.0.0.1', '::1');
+delete from mysql.user where user='';
+flush privileges;

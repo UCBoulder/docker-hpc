@@ -1,0 +1,12 @@
+/var/spool/slurmd true slurm 0644 0755
+/var/run/slurm true slurm 0644 0755
+/var/run/slurmd true slurm 0644 0755
+/var/run/slurmdbd true slurm 0644 0755
+/var/lib/slurmd true slurm 0644 0755
+/var/log/slurm true slurm 0644 0755
+/data true slurm 0644 0755
+/etc/slurm true slurm 0644 0755
+/etc/init.d/slurmd true slurm 0555 0755
+/etc/init.d/slurmdbd true slurm 0555 0755
+/etc/default/slurm true slurm 0644 0755
+

@@ -1,0 +1,3 @@
+#!/usr/bin/with-contenv bash
+
+cat /root/slurm_hosts >> /etc/hosts

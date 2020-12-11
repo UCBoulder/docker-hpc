@@ -1,0 +1,21 @@
+modules:
+  enable::
+    - lmod
+  lmod:
+    hash_length: 0
+    core_compilers:
+      - 'gcc@9.3.0'
+    hierarchy:
+      - 'mpi'
+    whitelist: 
+    - 'mpi' 
+    - 'hdf5'
+    - 'python'
+    - 'lapack'
+    - 'parallel'
+    blacklist: 
+    - '%gcc@9.3.0'
+    hdf5:
+      suffixes:
+        '^openmpi': openmpi
+        '^mpich': mpich

@@ -1,0 +1,5 @@
+/home/hpc-learner/.jupyter true hpc-learner 0600 0700
+/home/hpc-learner/projects true hpc-learner 0600 0700
+/home/hpc-learner/scratch true hpc-learner 0600 0700
+/usr/local/etc/jupyter/jupyter_notebook_config.py false root 0644 0777
+/usr/local/bin/submit.py false root 0755 0777

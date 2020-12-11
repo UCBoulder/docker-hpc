@@ -1,0 +1,9 @@
+#!/usr/bin/with-contenv bash
+
+mkdir -p /var/run/slurm
+chown slurm:slurm /var/run/slurm
+s6-setuidgid root exec /usr/sbin/slurmctld -c 
+s6-setuidgid root exec /usr/sbin/slurmd -c -N c1
+s6-setuidgid root exec /usr/sbin/slurmd -c -N c2
+s6-setuidgid root exec /usr/sbin/slurmd -c -N c3
+s6-setuidgid root exec /usr/sbin/slurmd -c -N c4

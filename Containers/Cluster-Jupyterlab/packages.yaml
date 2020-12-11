@@ -1,0 +1,78 @@
+packages:
+  git:
+    buildable: False
+    version: ['2.25.1']
+    paths:
+      git@2.25.1: /usr
+  pkg-config:
+    version: ['0.29.1']
+    paths:
+      pkg-config@0.29.1%gcc@9.3.0: /usr
+    buildable: False
+  cmake:
+    version: ['3.16.3']
+    paths:
+      cmake@3.16.3%gcc@9.3.0: /usr
+    buildable: False
+  python:
+    buildable: False
+  slurm:
+    version: ['20.02.5']
+    paths:
+      slurm@20.02.5: /usr
+    buildable: False
+  unzip:
+    buildable: False
+    paths:
+      unzip@6.0: /usr
+    version: [6.0]
+  zlib:
+    buildable: False
+    paths:
+      zlib@1.2.11: /usr
+    version: [1.2.11]
+  tcl:
+    paths:
+      tcl@8.6: /usr
+    version: [8.6]
+    buildable: False
+  m4:
+    paths:
+      m4@1.4.18: /usr
+    version: [1.4.18]
+    buildable: False
+  libtool:
+    paths:
+      libtool@2.4.6: /usr
+    version: [2.4.6]
+    buildable: False
+  xz:
+    paths:
+      xz@5.2.4: /usr
+    version: [5.2.4]
+    buildable: False
+  libxml2:
+    paths:
+      libxml2@2.9.10: /usr
+    version: [2.9.10]
+    buildable: False
+  perl:
+    version: [5.30.0]
+    paths:
+      perl@5.30.0: /usr
+    buildable: False
+  autoconf:
+    paths:
+      autoconf@2.69.11: /usr
+    version: [2.69.11]
+    buildable: False
+  automake:
+    paths:
+      automake@1.15.1: /usr
+    version: [1.15.1]
+    buildable: False
+  slurm:
+    paths:
+      slurm@20.02.5: /usr
+    version: [20.02.5]
+    buildable: False

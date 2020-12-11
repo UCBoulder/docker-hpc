@@ -1,0 +1,3 @@
+#!/usr/bin/with-contenv bash
+cd /home/hpc-learner
+s6-setuidgid hpc-learner exec /usr/local/bin/jupyter lab --port=9999 --no-browser --ip=0.0.0.0  --notebook-dir=/home/hpc-learner --config=/usr/local/etc/jupyter/jupyter_notebook_config.py
