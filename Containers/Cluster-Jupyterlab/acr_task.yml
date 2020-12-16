@@ -1,0 +1,14 @@
+version: v1.1.0
+steps:
+  - id: validate
+    cmd: openpolicyagent/conftest test Dockerfile --policy dockerfile-security.rego
+    pull: true
+
+  - id: build
+    build: -t $Registry/docker-hpc:$ID .
+    timeout: 14400
+    when: ["validate"]
+
+  - id: push
+    push: ["$Registry/docker-hpc:$ID"]
+    when: ["build"]

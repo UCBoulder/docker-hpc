@@ -1,29 +1,12 @@
-ARG ROOT_CONTAINER=ubuntu:focal-20200720@sha256:5d1d5407f353843ecf8b16524bc5565aa332e9e6a1297c73a92d3e754b8a636d
+FROM ubuntu:focal-20200720@sha256:5d1d5407f353843ecf8b16524bc5565aa332e9e6a1297c73a92d3e754b8a636d
 
-ARG BASE_CONTAINER=$ROOT_CONTAINER
+USER root
 
-FROM $BASE_CONTAINER 
-
-MAINTAINER Thomas Hauser <thomas.hauser@colorado.edu>
-
-ARG NB_USER="hpc-learner"
-ARG NB_UID="1000"
-ARG NB_GID="100"
-
-ARG SLURM_VERSION=20.02.5
-ARG SLURM_DOWNLOAD_MD5=3902c8a06643cf70cf6fe750971f7146
-ARG SLURM_DOWNLOAD_URL=https://download.schedmd.com/slurm/slurm-20.02.5.tar.bz2
-
-ARG SPACK_RELEASE=v0.15
+ENV DEBIAN_FRONTEND=noninteractive 
 
 ENV     DEBIAN_FRONTEND=noninteractive \
 	SPACK_ROOT=/usr/local \
 	FORCE_UNSAFE_CONFIGURE=1
-
-# Fix DL4006
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-
-USER root
 
 # install all packages required for the containers
 
@@ -54,7 +37,7 @@ RUN apt-get -q update && apt-get install -qy --no-install-recommends \
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.8 1
 
 RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
-    locale-gen
+	locale-gen
 
 # packages for slurm
 
@@ -76,8 +59,8 @@ RUN echo "Set disable_coredump false" >> /etc/sudo.conf
 RUN groupadd -r slurm --gid=995 && useradd -r -g slurm --uid=995 slurm
 
 RUN set -x \
-	&& wget -O slurm.tar.bz2 "$SLURM_DOWNLOAD_URL" \
-	&& echo "$SLURM_DOWNLOAD_MD5" slurm.tar.bz2 | md5sum -c - \
+	&& wget -O slurm.tar.bz2 "https://download.schedmd.com/slurm/slurm-20.02.5.tar.bz2" \
+	&& echo "3902c8a06643cf70cf6fe750971f7146" slurm.tar.bz2 | md5sum -c - \
 	&& mkdir /usr/local/src/slurm \
 	&& tar jxf slurm.tar.bz2 -C /usr/local/src/slurm --strip-components=1 \
 	&& rm slurm.tar.bz2 \
@@ -91,21 +74,21 @@ RUN set -x \
 	&& cd \
 	&& rm -rf /usr/local/src/slurm \
 	&& mkdir -p /etc/sysconfig/slurm \
-        /var/spool/slurmd \
-        /var/run/slurmd \
-        /var/run/slurmdbd \
-        /var/lib/slurmd \
-        /var/log/slurm \
-        /data \
+	/var/spool/slurmd \
+	/var/run/slurmd \
+	/var/run/slurmdbd \
+	/var/lib/slurmd \
+	/var/log/slurm \
+	/data \
 	&& touch /var/lib/slurmd/node_state \
 	/var/lib/slurmd/front_end_state \
 	/var/lib/slurmd/job_state \
 	/var/lib/slurmd/resv_state \
-        /var/lib/slurmd/trigger_state \
-        /var/lib/slurmd/assoc_mgr_state \
-        /var/lib/slurmd/assoc_usage \
-        /var/lib/slurmd/qos_usage \
-        /var/lib/slurmd/fed_mgr_state \
+	/var/lib/slurmd/trigger_state \
+	/var/lib/slurmd/assoc_mgr_state \
+	/var/lib/slurmd/assoc_usage \
+	/var/lib/slurmd/qos_usage \
+	/var/lib/slurmd/fed_mgr_state \
 	&& chown -R slurm:slurm /var/*/slurm*
 
 COPY slurm/slurm.conf /etc/slurm/slurm.conf
@@ -130,11 +113,11 @@ RUN apt-get -q update && apt-get install -qy --no-install-recommends \
 
 # install and configure spack to create modules
 RUN cd $SPACK_ROOT \
-    && git clone https://github.com/spack/spack.git \
-    && cd spack \
-    && git checkout releases/v0.15 \
-    && echo ". $SPACK_ROOT/spack/share/spack/setup-env.sh" > /root/101-spack.sh \
-    && chmod +x /root/101-spack.sh
+	&& git clone https://github.com/spack/spack.git \
+	&& cd spack \
+	&& git checkout releases/v0.15 \
+	&& echo ". $SPACK_ROOT/spack/share/spack/setup-env.sh" > /root/101-spack.sh \
+	&& chmod +x /root/101-spack.sh
 
 COPY modules.yaml packages.yaml /etc/spack/
 
@@ -143,7 +126,7 @@ RUN . /root/101-spack.sh \
 	&& spack install lmod \
 	&& echo "source $(spack location --install-dir lmod)/lmod/lmod/init/bash" >> /etc/profile.d/lmod.sh \
 	&& echo "module use $SPACK_ROOT/share/spack/lmod/linux-ubuntu20.04-x86_64/Core" >> /etc/profile.d/lmod.sh \
-        && mkdir -p $SPACK_ROOT/share/spack/lmod/linux-ubuntu20.04-x86_64/Core
+	&& mkdir -p $SPACK_ROOT/share/spack/lmod/linux-ubuntu20.04-x86_64/Core
 
 # OpenMPI + MPICH + HDF5 3 version + parallel and lapack
 RUN . /root/101-spack.sh \
@@ -171,16 +154,16 @@ RUN sed -i 's/^#force_color_prompt=yes/force_color_prompt=yes/' /etc/skel/.bashr
 RUN echo "auth requisite pam_deny.so" >> /etc/pam.d/su && \
 	sed -i.bak -e 's/^%admin/#%admin/' /etc/sudoers && \
 	sed -i.bak -e 's/^%sudo/#%sudo/' /etc/sudoers && \
-	useradd -m -s /bin/bash -N -u $NB_UID $NB_USER && \
-	mkdir -p /scratch/$NB_USER && \
-	chown $NB_USER:$NB_GID /scratch/$NB_USER && \
-	mkdir -p /projects/$NB_USER && \
-	chown $NB_USER:$NB_GID /projects/$NB_USER && \
-	ln -s /projects/$NB_USER /home/$NB_USER/projects && \
-	ln -s /scratch/$NB_USER /home/$NB_USER/scratch && \
-	echo "$NB_USER ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
+	useradd -m -s /bin/bash -N -u 1000 hpc-learner && \
+	mkdir -p /scratch/hpc-learner && \
+	chown hpc-learner:100 /scratch/hpc-learner && \
+	mkdir -p /projects/hpc-learner && \
+	chown hpc-learner:100 /projects/hpc-learner && \
+	ln -s /projects/hpc-learner /home/hpc-learner/projects && \
+	ln -s /scratch/hpc-learner /home/hpc-learner/scratch && \
+	echo "hpc-learner ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
 	sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
-# SSH login fix. Otherwise user is kicked off after login
+	# SSH login fix. Otherwise user is kicked off after login
 	sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
 
 ENV NOTVISIBLE "in users profile"
@@ -199,30 +182,30 @@ RUN . /root/101-spack.sh \
 # copy the jupyter config 
 COPY jupyter_notebook_config.py /usr/local/etc/jupyter
 
-# add supervisor s6 
-ADD https://github.com/just-containers/s6-overlay/releases/download/v2.0.0.1/s6-overlay-amd64.tar.gz /tmp/
+# COPY supervisor s6 
+COPY https://github.com/just-containers/s6-overlay/releases/download/v2.0.0.1/s6-overlay-amd64.tar.gz /tmp/
 RUN tar xzf /tmp/s6-overlay-amd64.tar.gz -C / --exclude='./bin' && \
 	tar xzf /tmp/s6-overlay-amd64.tar.gz -C /usr ./bin
 
 # Configure munge for s6
-ADD cont-init.d/01-munge /etc/cont-init.d
+COPY cont-init.d/01-munge /etc/cont-init.d
 
 # Configure slurm for s6
-ADD cont-init.d/02-hosts /etc/cont-init.d
-ADD cont-init.d/03-slurm /etc/cont-init.d
+COPY cont-init.d/02-hosts /etc/cont-init.d
+COPY cont-init.d/03-slurm /etc/cont-init.d
 
 # fix slurm permissions
-ADD slurm-permissions /etc/fix-attrs.d
+COPY slurm-permissions /etc/fix-attrs.d
 
 # fix permission of .jupyter in hpc-learner directory
-ADD jupyter-user-permissions /etc/fix-attrs.d
+COPY jupyter-user-permissions /etc/fix-attrs.d
 
 # Setting up juptyerlab under s6
-ADD services.d/jupyterlab /etc/services.d/jupyterlab
+COPY services.d/jupyterlab /etc/services.d/jupyterlab
 
 ENTRYPOINT ["/init"]
 
-ENV HOME /home/$NB_USER
+ENV HOME /home/hpc-learner
 WORKDIR $HOME
 
 
